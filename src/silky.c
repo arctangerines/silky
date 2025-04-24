@@ -3,19 +3,6 @@
 #include <stdlib.h>
 #include <wchar.h>
 
-// TODO: Function to convert from wchar_t to char and vice versa
-// TODO: Function to compare strings
-
-
-// TODO: Function to concatenate
-wchar_t*
-slkcat(wchar_t* str1, wchar_t* str2)
-{
-    // STEP: Get lens
-    // STEP: malloc a new silky+str adding the 2 lens
-    // STEP: memcpy(?) to the new str
-}
-
 enum chartype
 {
     WCHAR,
@@ -27,14 +14,44 @@ enum chartype
 // NOTE: I think this needs to be packed but not sure so i'm not going to do it
 struct silky
 {
-
     size_t len;
     // Extra spaces in the alloc'd string
     // functions to apply to this: slklen, it should update the value
     // slkmemcpy
     size_t extra;
 };
+// TODO: Function to convert from wchar_t to char and vice versa
+// TODO: Function to compare strings
 
+// TODO: Function to concatenate
+wchar_t*
+slkcat(wchar_t* str1, wchar_t* str2)
+{
+    // STEP: Get lens
+    struct silky* str1md = (struct silky*)str1 - 1;
+    size_t        len1   = str1md->len;
+    struct silky* str2md = (struct silky*)str2 - 1;
+    size_t        len2   = str2md->len;
+
+    // STEP: malloc a new silky+str adding the 2 lens
+    struct silky* s =
+        malloc(sizeof(struct silky) + (sizeof(wchar_t) * (len1 + len2 + 1)));
+    // STEP: memcpy(?) to the new str
+    wchar_t* str = (wchar_t*)(s+1);
+    s->len = len1+len2;
+    str[len1+len2] = '\0';
+    for (size_t i = 0; i < len1; i++)
+    {
+        str[i] = str1[i];
+    }
+    for (size_t lenlen = len1; lenlen < len1+len2; lenlen++)
+    for (size_t i = 0; i < len2; i++)
+    {
+        str[len1+i] = str2[i];
+    }
+    return str;
+}
+//TODO: free funciton!
 
 size_t
 slklen(wchar_t* string)
@@ -59,8 +76,8 @@ slklen(wchar_t* string)
 wchar_t*
 slkmemcpy(wchar_t* dest, wchar_t* src, size_t len)
 {
-    wchar_t* deststr= dest;
-    const wchar_t* srcstr = src;
+    wchar_t*       deststr = dest;
+    const wchar_t* srcstr  = src;
 
     // more elegant and easier to digest
     while (len--)
