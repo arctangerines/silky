@@ -5,9 +5,14 @@
 #include <stdlib.h>
 #include <wchar.h>
 
+// FIXME: I kinda lowkey highkey hate that its a single header library
 #ifndef SILKY_H
 
-enum chartype;
+enum chartype
+{
+    WCHAR,
+    CHAR,
+};
 struct silky;
 
 uint8_t
@@ -38,12 +43,6 @@ slkinit(wchar_t* string);
 #endif // SILKY_H
 
 #ifdef SILKY_IMPL
-enum chartype
-{
-    WCHAR,
-    CHAR,
-};
-
 // So this string library is supposed to be compatible with regular string
 // functions so we just wanna return the buffer but have a region that comes
 // before the string that contains meta data, classic malloc pattern
@@ -185,4 +184,4 @@ slkinit(wchar_t* string)
     slkmemcpy(str, string, len);
     return str;
 }
-#endif SILKY_IMPL
+#endif //SILKY_IMPL
