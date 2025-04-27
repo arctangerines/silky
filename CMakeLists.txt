@@ -4,5 +4,5 @@ project(silky C)
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED on)
 
-add_library(silky INTERFACE)
+add_library(silky STATIC src/silky.c)
 target_include_directories(silky INTERFACE src)
