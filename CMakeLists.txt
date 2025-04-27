@@ -1,5 +1,3 @@
-add_executable(silky ${SRCS})
-
 cmake_minimum_required(VERSION 3.31)
 project(silky C)
 
@@ -7,4 +5,4 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED on)
 
 add_library(silky INTERFACE)
-target_include_directories(silky INTERFACE src/silky.h)
+target_include_directories(silky INTERFACE src)
