@@ -1,42 +1,38 @@
-// In a single C file add #define SILKY_IMPL
+#ifndef SILKY_H
+#define SILKY_H
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <wchar.h>
 
-#ifndef SILKY_H
-#define SILKY_H
+/*
+ * NOTE: Reading some GNU docs, and other relevant info on strings and chars
+ * and whatnot, it's in general better to use char* if we cant make any asurance
+ * about the types (meaning utf8, utf16, utf32) that we will be reading, so
+ * goodbye wchar_t, you were too inconsistent for me...
+ */
 
-enum chartype
-{
-    WCHAR,
-    CHAR,
-};
 struct silky;
 
 uint8_t
-slkcmp(wchar_t* str1, wchar_t* str2);
+slkcmp(char* str1, wchar_t* str2);
 
 char*
-slkwctochar(wchar_t* str);
-
-wchar_t*
-slkcat(wchar_t* str1, wchar_t* str2);
+slkcat(char* str1, char* str2);
 
 void
-slkfree(wchar_t* str);
+slkfree(char* str);
 
 size_t
-slkgetlen(wchar_t* str);
+slkgetlen(char* str);
 
 // size_t
-// slklen(wchar_t* str);
+// slklen(char* str);
 
-wchar_t*
-slkmemcpy(wchar_t* dest, wchar_t* src, size_t len);
+char*
+slkmemcpy(char* dest, char* src, size_t len);
 
-wchar_t*
-slkinit(wchar_t* string);
+char*
+slkinit(char* string);
 
 #endif // SILKY_H

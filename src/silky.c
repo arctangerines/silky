@@ -1,4 +1,7 @@
 #include "silky.h"
+//TODO: Check that nothing works by just looking for nul and actually
+// handles things with length
+
 // So this string library is supposed to be compatible with regular string
 // functions so we just wanna return the buffer but have a region that comes
 // before the string that contains meta data, classic malloc pattern
@@ -14,7 +17,7 @@ struct silky
 
 /// String comparison function
 uint8_t
-slkcmp(wchar_t* str1, wchar_t* str2)
+slkcmp(char* str1, wchar_t* str2)
 {
     struct silky* s1 = (struct silky*)str1 - 1;
     struct silky* s2 = (struct silky*)str2 - 1;
@@ -26,27 +29,13 @@ slkcmp(wchar_t* str1, wchar_t* str2)
     return 1;
 }
 
-/// Convert from wide char string to a chill normal guy (char) string
-char*
-slkwctochar(wchar_t* str)
-{
-    struct silky* s       = (struct silky*)str - 1;
-    char*         charstr = malloc(sizeof(char) * s->len + 1);
-    charstr[s->len]       = '\0';
-    for (size_t i = 0; i < s->len; i++)
-    {
-        charstr[i] = (char)(str[i]);
-    }
-    return charstr;
-}
-
 /// Concat 2 silky strings together
 ///
 /// it doesn't meow
 ///
 /// FIXME: I think i need to find a way to use memcpy on this
-wchar_t*
-slkcat(wchar_t* str1, wchar_t* str2)
+char*
+slkcat(char* str1, char* str2)
 {
     // STEP: Get lens
     struct silky* str1md = (struct silky*)str1 - 1;
@@ -56,10 +45,10 @@ slkcat(wchar_t* str1, wchar_t* str2)
 
     // STEP: malloc a new silky+str adding the 2 lens
     struct silky* s =
-        malloc(sizeof(struct silky) + (sizeof(wchar_t) * (len1 + len2 + 1)));
+        malloc(sizeof(struct silky) + (sizeof(char) * (len1 + len2 + 1)));
     // STEP: memcpy(?) to the new str
     // XXX: perhaps we can use memcpy and an offset
-    wchar_t* str     = (wchar_t*)(s + 1);
+    char* str     = (char*)(s + 1);
     s->len           = len1 + len2;
     str[len1 + len2] = '\0';
     for (size_t i = 0; i < len1; i++)
@@ -73,19 +62,9 @@ slkcat(wchar_t* str1, wchar_t* str2)
         }
     return str;
 }
-/// Free the silky string
-///
-/// yk, its free
-void
-slkfree(wchar_t* str)
-{
-    struct silky* s = (struct silky*)str - 1;
-    free(s);
-}
-
 /// Get the length of a string
 size_t
-slkgetlen(wchar_t* str)
+slkgetlen(char* str)
 {
     struct silky* s = (struct silky*)str - 1;
     return s->len;
@@ -93,9 +72,9 @@ slkgetlen(wchar_t* str)
 
 /// Get the length of a string by looping, internal use only
 size_t
-slklen(wchar_t* str)
+slklen(char* str)
 {
-    wchar_t* strc;
+    char* strc;
     /* So pretty clever pattern thats very common
      * Since with pointer arithmetic you can do ++ or add + 1 and the pointer
      * will move 1 n sized place (the n depends of type it points to)
@@ -112,11 +91,11 @@ slklen(wchar_t* str)
 // Implementation of silk mem copy
 // FIXME: OK maybe we do need another member saying how much of the array is
 // free
-wchar_t*
-slkmemcpy(wchar_t* dest, wchar_t* src, size_t len)
+char*
+slkmemcpy(char* dest, char* src, size_t len)
 {
-    wchar_t*       deststr = dest;
-    const wchar_t* srcstr  = src;
+    char*       deststr = dest;
+    const char* srcstr  = src;
 
     // more elegant and easier to digest
     while (len--)
@@ -126,17 +105,30 @@ slkmemcpy(wchar_t* dest, wchar_t* src, size_t len)
     return dest;
 }
 
+/// Free the silky string
+///
+/// yk, it's free
+void
+slkfree(char* str)
+{
+    struct silky* s = (struct silky*)str - 1;
+    free(s);
+}
+
+
 /// Create a new silky string
 ///
 /// NOTE: Kinda wanna change it to slkmake
-wchar_t*
-slkinit(wchar_t* string)
+///TODO: we should perhaps allocate a buffer of a bigger size than just the string
+/// so we dont have to alloc so much?
+char*
+slkinit(char* string)
 {
     size_t        len = slklen(string);
     struct silky* s =
-        malloc(sizeof(struct silky) + (sizeof(wchar_t) * (len + 1)));
+        malloc(sizeof(struct silky) + (sizeof(char) * (len + 1)));
     s->len       = len;
-    wchar_t* str = (wchar_t*)(s + 1); // add then cast
+    char* str = (char*)(s + 1); // add then cast
     slkmemcpy(str, string, len);
     return str;
 }
